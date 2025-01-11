@@ -1,13 +1,11 @@
-import Header from './components/Header'
-import TasksPage from './components/Tasks'
-
+import Header from "./components/Header"
+import TasksPage from "./components/Tasks"
 
 function App() {
-
   return (
     <>
-    <Header />
-    <TasksPage />
+      <Header />
+      <TasksPage />
     </>
   )
 }
