@@ -1,11 +1,9 @@
-import Header from "./components/Header"
-import TasksPage from "./components/Tasks"
+import Sidebar from "./components/Sidebar"
 
 function App() {
   return (
     <>
-      <TasksPage />
-      <Header />
+      <Sidebar />
     </>
   )
 }
