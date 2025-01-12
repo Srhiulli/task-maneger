@@ -1,7 +1,13 @@
 import Header from "./components/Header"
+import TasksPage from "./components/Tasks"
 
 function App() {
-  return <Header />
+  return (
+    <>
+      <TasksPage />
+      <Header />
+    </>
+  )
 }
 
 export default App
