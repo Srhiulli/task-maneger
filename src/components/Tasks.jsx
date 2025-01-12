@@ -1,7 +1,7 @@
 function TasksPage() {
   return (
     <div className="flex">
-      <h1>LALALA</h1>
+      <h1 className="text-red-500">LALALA LE</h1>
     </div>
   )
 }
