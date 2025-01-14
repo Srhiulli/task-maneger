@@ -38,7 +38,7 @@ function TasksPage() {
   const afternoonTasks = tasks.filter((task) => task.time === "afternoon")
   const nightTasks = tasks.filter((task) => task.time === "night")
 
-  const handleCheckboxClick = (taskId) => {
+  const handleTaskCheckboxClick = (taskId) => {
     const newTasks = tasks.map((task) => {
       if (task.id !== taskId) {
         return task
@@ -66,6 +66,10 @@ function TasksPage() {
         status: "done",
       }
     })
+    setTasks(newTasks)
+  }
+  const handleTaskDeleteClick = (taskId) => {
+    const newTasks = tasks.filter((task) => task.id !== taskId)
     setTasks(newTasks)
   }
 
@@ -99,7 +103,8 @@ function TasksPage() {
             <TaskItem
               task={task}
               key={task.id}
-              handleCheckboxClick={handleCheckboxClick}
+              handleCheckboxClick={handleTaskCheckboxClick}
+              handleDeleteClick={handleTaskDeleteClick}
             />
           ))}
         </div>
@@ -108,7 +113,8 @@ function TasksPage() {
           <TaskItem
             task={task}
             key={task.id}
-            handleCheckboxClick={handleCheckboxClick}
+            handleCheckboxClick={handleTaskCheckboxClick}
+            handleDeleteClick={handleTaskDeleteClick}
           />
         ))}{" "}
         <TaskSeparator title="Noite" icon={<MoonIcon />} />
@@ -116,7 +122,8 @@ function TasksPage() {
           <TaskItem
             task={task}
             key={task.id}
-            handleCheckboxClick={handleCheckboxClick}
+            handleCheckboxClick={handleTaskCheckboxClick}
+            handleDeleteClick={handleTaskDeleteClick}
           />
         ))}
       </div>
