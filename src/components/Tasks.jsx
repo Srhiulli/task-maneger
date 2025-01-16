@@ -15,7 +15,7 @@ import TaskSeparator from "./TasksSeparator"
 
 function TasksPage() {
   // eslint-disable-next-line no-unused-vars
-  const [addTaskDialog, setAddTaskDialog] = useState(false)
+  const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
   const [tasks, setTasks] = useState([
     {
       id: 1,
@@ -96,11 +96,17 @@ function TasksPage() {
             Limpar tarefas
             <SendTotrash />
           </Button>
-          <Button variant="primary" onClick={() => setAddTaskDialog(true)}>
+          <Button
+            variant="primary"
+            onClick={() => setAddTaskDialogIsOpen(true)}
+          >
             Nova tarefa
             <AddIcon />
           </Button>
-          <AddTaskDialog isOpen={addTaskDialog} />
+          <AddTaskDialog
+            isOpen={addTaskDialogIsOpen}
+            handleClose={() => setAddTaskDialogIsOpen(false)}
+          />
         </div>
       </div>
 
