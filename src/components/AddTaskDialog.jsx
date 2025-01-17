@@ -1,15 +1,31 @@
 import "./AddTaskDialog.css"
 
 import { useRef } from "react"
+import { useState } from "react"
 import { createPortal } from "react-dom"
 import { CSSTransition } from "react-transition-group"
+import { v4 } from "uuid"
 
 import Button from "./Button"
 import Input from "./Input"
 import SelectTime from "./SelectTime"
 
-const AddTaskDialog = ({ isOpen, handleClose }) => {
+const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
   const nodeRef = useRef()
+  const [title, setTitle] = useState("")
+  const [time, setTime] = useState("")
+  const [description, setDescription] = useState("")
+
+  const handleSaveClick = () => {
+    handleSubmit({
+      id: v4(),
+      title,
+      time,
+      description,
+      status: "not_started",
+    })
+    handleClose()
+  }
 
   return (
     <CSSTransition
@@ -37,14 +53,21 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
                   id="title"
                   label="Título"
                   placeholder="Insira o título da tarefa"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
-                <Input id="time" label="Período" placeholder="Selecione" />
-                <SelectTime />
+
+                <SelectTime
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                />
 
                 <Input
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a tarefa"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
                 <div className="flex gap-3">
                   <Button
@@ -55,7 +78,11 @@ const AddTaskDialog = ({ isOpen, handleClose }) => {
                   >
                     Cancelar
                   </Button>
-                  <Button className="w-full" size="large">
+                  <Button
+                    className="w-full"
+                    size="large"
+                    onClick={() => handleSaveClick()}
+                  >
                     Salvar
                   </Button>
                 </div>

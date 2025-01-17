@@ -14,7 +14,6 @@ import TaskItem from "./TaskItem"
 import TaskSeparator from "./TasksSeparator"
 
 function TasksPage() {
-  // eslint-disable-next-line no-unused-vars
   const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
   const [tasks, setTasks] = useState([
     {
@@ -82,6 +81,11 @@ function TasksPage() {
     toast.success("Tarefa deletada com sucesso")
   }
 
+  const handleAddTaskSubmit = (newTask) => {
+    setTasks([...tasks, newTask])
+    toast.success("Tarefa adicionada com sucesso")
+  }
+
   return (
     <div className="w-full space-y-6 px-8 py-16">
       <div className="flex w-full justify-between">
@@ -106,6 +110,7 @@ function TasksPage() {
           <AddTaskDialog
             isOpen={addTaskDialogIsOpen}
             handleClose={() => setAddTaskDialogIsOpen(false)}
+            handleSubmit={handleAddTaskSubmit}
           />
         </div>
       </div>
