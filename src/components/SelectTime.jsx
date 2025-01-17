@@ -11,7 +11,7 @@ const SelectTime = (props) => {
       >
         <option value="morning">Manhã</option>
         <option value="afternoon">Tarde</option>
-        <option value="evening">Noite</option>
+        <option value="night">Noite</option>
       </select>
     </div>
   )
