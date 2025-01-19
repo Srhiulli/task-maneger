@@ -30,10 +30,10 @@ const Button = ({
     </button>
   )
 }
-Button.PropTypes = {
+Button.propTypes = {
   children: PropTypes.node.isRequired,
-  size: PropTypes.oneOf(["small", "large"]),
   color: PropTypes.oneOf(["primary", "secundary", "ghost"]),
+  size: PropTypes.oneOf(["small", "large"]),
   className: PropTypes.string,
 }
 
