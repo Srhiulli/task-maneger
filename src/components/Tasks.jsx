@@ -117,7 +117,7 @@ function TasksPage() {
 
       {/* LISTA DE TAREFAS */}
 
-      <div className="rounded-xl bg-white p-6">
+      <div className="flex flex-col gap-2 rounded-xl bg-white p-6">
         <div>
           <TaskSeparator title="Manhã" icon={<SunIcon />} />
           {morningTasks.map((task) => (
