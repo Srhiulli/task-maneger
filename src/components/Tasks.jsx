@@ -1,4 +1,4 @@
-import { useEffect,useState } from "react"
+import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 import {
@@ -72,7 +72,18 @@ function TasksPage() {
     setTasks(newTasks)
     toast.success("Tarefa deletada com sucesso")
   }
-  const handleAddTaskSubmit = (newTask) => {
+  const handleAddTaskSubmit = async (newTask) => {
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newTask),
+    })
+    if (!response.ok) {
+      toast.error("Erro ao adicionar tarefa. Porfavor, tente novamente")
+      return
+    }
     setTasks([...tasks, newTask])
     toast.success("Tarefa adicionada com sucesso")
   }
