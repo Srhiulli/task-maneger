@@ -21,7 +21,6 @@ Input.displayName = "Input"
 
 Input.propTypes = {
   errorMessage: PropTypes.string,
-  ref: PropTypes.object,
   type: PropTypes.string,
   label: PropTypes.string.isRequired,
   id: PropTypes.string.isRequired,
