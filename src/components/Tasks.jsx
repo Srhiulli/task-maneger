@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect,useState } from "react"
 import { toast } from "sonner"
 
 import {
@@ -15,29 +15,21 @@ import TaskSeparator from "./TasksSeparator"
 
 function TasksPage() {
   const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
-  const [tasks, setTasks] = useState([
-    {
-      id: 1,
-      title: "Estudar",
-      description: "Estudar",
-      time: "morning",
-      status: "done",
-    },
-    {
-      id: 2,
-      title: "Exercitar",
-      description: "Exercitar",
-      time: "afternoon",
-      status: "in_progress",
-    },
-    {
-      id: 3,
-      title: "Dormir",
-      description: "Dormir",
-      time: "night",
-      status: "not_started",
-    },
-  ])
+  const [tasks, setTasks] = useState([])
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const tasks = await fetch("http://localhost:3000/tasks", {
+        method: "GET",
+      })
+
+      const data = await tasks.json()
+      setTasks(data)
+    }
+
+    fetchTasks()
+  }, [])
+
   const morningTasks = tasks.filter((task) => task.time === "morning")
   const afternoonTasks = tasks.filter((task) => task.time === "afternoon")
   const nightTasks = tasks.filter((task) => task.time === "night")
@@ -80,7 +72,6 @@ function TasksPage() {
     setTasks(newTasks)
     toast.success("Tarefa deletada com sucesso")
   }
-
   const handleAddTaskSubmit = (newTask) => {
     setTasks([...tasks, newTask])
     toast.success("Tarefa adicionada com sucesso")
