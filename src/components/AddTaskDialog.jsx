@@ -97,11 +97,6 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
                   onChange={(e) => setTime(e.target.value)}
                   errorMessage={timeErrors?.message}
                 />
-                {timeErrors && (
-                  <p className="text-left text-xs text-red-500">
-                    {timeErrors.message}
-                  </p>
-                )}
 
                 <Input
                   id="description"
