@@ -1,3 +1,4 @@
+import PropTypes from "prop-types"
 import { forwardRef } from "react"
 
 import InputErrorMessage from "./InputErrorMessage"
@@ -25,4 +26,10 @@ const SelectTime = forwardRef((props, ref) => {
   )
 })
 SelectTime.displayName = "SelectTime"
+
+SelectTime.propTypes = {
+  errorMessage: PropTypes.string,
+  onChange: PropTypes.func,
+  value: PropTypes.string,
+}
 export default SelectTime
