@@ -96,14 +96,11 @@ function TasksPage() {
           <h2 className="text-black">Minhas tarefas</h2>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="secundary">
+          <Button color="secundary">
             Limpar tarefas
             <SendTotrash />
           </Button>
-          <Button
-            variant="primary"
-            onClick={() => setAddTaskDialogIsOpen(true)}
-          >
+          <Button color="primary" onClick={() => setAddTaskDialogIsOpen(true)}>
             Nova tarefa
             <AddIcon />
           </Button>
