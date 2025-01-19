@@ -1,8 +1,6 @@
 import "./AddTaskDialog.css"
 
-import { useRef } from "react"
-import { useState } from "react"
-import { useEffect } from "react"
+import { useRef,useState } from "react"
 import { createPortal } from "react-dom"
 import { CSSTransition } from "react-transition-group"
 import { v4 } from "uuid"
@@ -12,22 +10,19 @@ import Input from "./Input"
 import SelectTime from "./SelectTime"
 
 const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
-  const nodeRef = useRef()
-  const [title, setTitle] = useState("")
-  const [time, setTime] = useState("morning")
-  const [description, setDescription] = useState("")
   const [errors, setErrors] = useState([])
 
-  useEffect(() => {
-    if (!isOpen) {
-      setTitle("")
-      setTime("")
-      setDescription("")
-    }
-  }, [isOpen])
+  const nodeRef = useRef()
+  const titleRef = useRef()
+  const descriptionRef = useRef()
+  const timeRef = useRef()
+  //Acessar o elemento HTML do input de título
 
   const handleSaveClick = () => {
     let errors = []
+    const title = titleRef.current.value
+    const description = descriptionRef.current.value
+    const time = timeRef.current.value
 
     if (!title.trim()) {
       errors.push({ inputName: "title", message: "Campo obrigatório" })
@@ -47,9 +42,9 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
 
     handleSubmit({
       id: v4(),
-      title,
-      time,
-      description,
+      title: titleRef.current.value,
+      time: timeRef.current.value,
+      description: descriptionRef.current.value,
       status: "not_started",
     })
 
@@ -87,23 +82,17 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
                   id="title"
                   label="Título"
                   placeholder="Insira o título da tarefa"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
                   errorMessage={titleErrors?.message}
+                  ref={titleRef}
                 />
 
-                <SelectTime
-                  value={time}
-                  onChange={(e) => setTime(e.target.value)}
-                  errorMessage={timeErrors?.message}
-                />
+                <SelectTime errorMessage={timeErrors?.message} ref={timeRef} />
 
                 <Input
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a tarefa"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  ref={descriptionRef}
                   errorMessage={descriptionErrors?.message}
                 />
 
