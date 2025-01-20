@@ -67,18 +67,13 @@ function TasksPage() {
     })
     setTasks(newTasks)
   }
-  const handleTaskDeleteClick = async (taskId) => {
-    const response = await fetch(`http://localhost:3000/tasks/${taskId}`, {
-      method: "DELETE",
-    })
-    if (!response.ok) {
-      toast.error("Erro ao deletar tarefa. Porfavor, tente novamente")
-      return
-    }
+
+  const onDeleteTaskSucess = async (taskId) => {
     const newTasks = tasks.filter((task) => task.id !== taskId)
     setTasks(newTasks)
     toast.success("Tarefa deletada com sucesso")
   }
+
   const handleAddTaskSubmit = async (newTask) => {
     const response = await fetch("http://localhost:3000/tasks", {
       method: "POST",
@@ -131,7 +126,7 @@ function TasksPage() {
               task={task}
               key={task.id}
               handleCheckboxClick={handleTaskCheckboxClick}
-              handleDeleteClick={handleTaskDeleteClick}
+              onDeleteSucess={onDeleteTaskSucess}
             />
           ))}
         </div>
@@ -141,7 +136,7 @@ function TasksPage() {
             task={task}
             key={task.id}
             handleCheckboxClick={handleTaskCheckboxClick}
-            handleDeleteClick={handleTaskDeleteClick}
+            onDeleteSucess={onDeleteTaskSucess}
           />
         ))}{" "}
         <TaskSeparator title="Noite" icon={<MoonIcon />} />
@@ -150,7 +145,7 @@ function TasksPage() {
             task={task}
             key={task.id}
             handleCheckboxClick={handleTaskCheckboxClick}
-            handleDeleteClick={handleTaskDeleteClick}
+            onDeleteSucess={onDeleteTaskSucess}
           />
         ))}
       </div>

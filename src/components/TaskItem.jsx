@@ -1,4 +1,6 @@
 import PropTypes from "prop-types"
+import { useState } from "react"
+import { toast } from "sonner"
 
 import {
   CheckIcon,
@@ -8,7 +10,23 @@ import {
 } from "../assets/icons"
 import Button from "../components/Button"
 
-const TaskItem = ({ task, handleCheckboxClick, handleDeleteClick }) => {
+const TaskItem = ({ task, handleCheckboxClick, onDeleteSucess }) => {
+  const [deleteTaskIsLoading, setDeleteTaskIsLoading] = useState(false)
+
+  const handleDeleteClick = async () => {
+    setDeleteTaskIsLoading(true)
+    const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
+      method: "DELETE",
+    })
+    if (!response.ok) {
+      setDeleteTaskIsLoading(false)
+      toast.error("Erro ao deletar tarefa")
+      return
+    }
+    onDeleteSucess(task.id)
+    setDeleteTaskIsLoading(false)
+  }
+
   const getStatusClasses = () => {
     if (task.status === "done") {
       return "bg-brand-primary text-brand-primary"
@@ -42,8 +60,16 @@ const TaskItem = ({ task, handleCheckboxClick, handleDeleteClick }) => {
         {task.title}
       </div>
       <div className="flex items-center gap-1">
-        <Button color="secundary" onClick={() => handleDeleteClick(task.id)}>
-          <TrashIcon className="text-brand-text-gray" />
+        <Button
+          color="secundary"
+          onClick={handleDeleteClick}
+          disabled={deleteTaskIsLoading}
+        >
+          {deleteTaskIsLoading ? (
+            <LoaderCircle className="animate-spin text-brand-text-gray" />
+          ) : (
+            <TrashIcon className="text-brand-text-gray" />
+          )}
         </Button>
         <a href="#" className="transition-all hover:opacity-75">
           <DetailsIcon />
