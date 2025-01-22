@@ -55,7 +55,7 @@ const TaskItem = ({ task, handleCheckboxClick, onDeleteSucess }) => {
           />
           {task.status === "done" && <CheckIcon />}
           {task.status === "in_progress" && (
-            <LoaderCircle className="animate-spin" />
+            <LoaderCircle className="animate-spin text-brand-process" />
           )}
         </label>
         {task.title}
