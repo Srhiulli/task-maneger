@@ -1,68 +1,68 @@
 import "./AddTaskDialog.css"
 
 import PropTypes from "prop-types"
-import { useRef, useState } from "react"
+import { useRef } from "react"
 import { createPortal } from "react-dom"
+import { useForm } from "react-hook-form"
 import { CSSTransition } from "react-transition-group"
 import { v4 } from "uuid"
 
+import { LoaderIcon } from "../assets/icons"
 import Button from "./Button"
 import Input from "./Input"
 import SelectTime from "./SelectTime"
 
-const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
-  const [errors, setErrors] = useState([])
+const AddTaskDialog = ({
+  isOpen,
+  handleClose,
+  onSubmitSuccess,
+  onSubmitError,
+}) => {
+  const {
+    register,
+    formState: { errors, isSubmitting },
+    handleSubmit,
+    reset,
+  } = useForm({
+    defaultValues: {
+      title: "",
+      time: "morning",
+      description: "",
+    },
+  })
 
   const nodeRef = useRef()
-  const titleRef = useRef()
-  const descriptionRef = useRef()
-  const timeRef = useRef()
-  //Acessar o elemento HTML do input de título
 
-  const handleSaveClick = () => {
-    let errors = []
-    const title = titleRef.current.value
-    const description = descriptionRef.current.value
-    const time = timeRef.current.value
-
-    if (!title.trim()) {
-      errors.push({ inputName: "title", message: "Campo obrigatório" })
-    }
-    if (!time.trim()) {
-      errors.push({ inputName: "time", message: "Campo obrigatório" })
-    }
-    if (!description.trim()) {
-      errors.push({ inputName: "description", message: "Campo obrigatório" })
-    }
-
-    setErrors(errors)
-
-    if (errors.length > 0) {
-      return
-    }
-
-    handleSubmit({
+  const handleSaveClick = async (data) => {
+    const task = {
       id: v4(),
-      title: titleRef.current.value,
-      time: timeRef.current.value,
-      description: descriptionRef.current.value,
+      title: data.title.trim(),
+      time: data.time,
+      description: data.description.trim(),
       status: "not_started",
+    }
+    const response = await fetch("http://localhost:3000/tasks", {
+      method: "POST",
+      body: JSON.stringify(task),
     })
-
+    if (!response.ok) {
+      return onSubmitError()
+    }
+    onSubmitSuccess(task)
     handleClose()
+    reset({
+      title: "",
+      time: "morning",
+      description: "",
+    })
   }
 
-  const titleErrors = errors.find((error) => error.inputName === "title")
-  const timeErrors = errors.find((error) => error.inputName === "time")
-  const descriptionErrors = errors.find(
-    (error) => error.inputName === "description"
-  )
   return (
     <CSSTransition
+      nodeRef={nodeRef}
       in={isOpen}
       timeout={500}
       classNames="add-task-dialog"
-      nodeRef={nodeRef}
       unmountOnExit
     >
       <div>
@@ -71,6 +71,7 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
             ref={nodeRef}
             className="fixed bottom-0 left-0 top-0 flex h-screen w-screen items-center justify-center backdrop-blur"
           >
+            {/* DIALOG */}
             <div className="rounded-xl bg-white p-5 text-center shadow">
               <h2 className="text-xl font-semibold text-brand-dark-blue">
                 Nova Tarefa
@@ -78,43 +79,72 @@ const AddTaskDialog = ({ isOpen, handleClose, handleSubmit }) => {
               <p className="mb-4 mt-1 text-sm text-brand-text-gray">
                 Insira as informações abaixo
               </p>
-              <div className="flex w-[336px] flex-col space-y-4">
+
+              <form
+                onSubmit={handleSubmit(handleSaveClick)}
+                className="flex w-[336px] flex-col space-y-4"
+              >
                 <Input
                   id="title"
                   label="Título"
                   placeholder="Insira o título da tarefa"
-                  errorMessage={titleErrors?.message}
-                  ref={titleRef}
+                  errorMessage={errors?.title?.message}
+                  disabled={isSubmitting}
+                  {...register("title", {
+                    required: "O título é obrigatório.",
+                    validate: (value) => {
+                      if (!value.trim()) {
+                        return "O título não pode ser vazio."
+                      }
+                      return true
+                    },
+                  })}
                 />
 
-                <SelectTime errorMessage={timeErrors?.message} ref={timeRef} />
+                <SelectTime
+                  disabled={isSubmitting}
+                  errorMessage={errors?.time?.message}
+                  {...register("time", { required: true })}
+                />
 
                 <Input
                   id="description"
                   label="Descrição"
                   placeholder="Descreva a tarefa"
-                  ref={descriptionRef}
-                  errorMessage={descriptionErrors?.message}
+                  errorMessage={errors?.description?.message}
+                  disabled={isSubmitting}
+                  {...register("description", {
+                    required: "A descrição é obrigatória.",
+                    validate: (value) => {
+                      if (!value.trim()) {
+                        return "A descrição não pode ser vazia."
+                      }
+                      return true
+                    },
+                  })}
                 />
 
                 <div className="flex gap-3">
                   <Button
                     size="large"
                     className="w-full"
-                    color="ghost"
+                    color="secondary"
                     onClick={handleClose}
+                    type="button"
                   >
                     Cancelar
                   </Button>
                   <Button
-                    className="w-full"
                     size="large"
-                    onClick={() => handleSaveClick()}
+                    className="w-full"
+                    disabled={isSubmitting}
+                    type="submit"
                   >
+                    {isSubmitting && <LoaderIcon className="animate-spin" />}
                     Salvar
                   </Button>
                 </div>
-              </div>
+              </form>
             </div>
           </div>,
           document.body
