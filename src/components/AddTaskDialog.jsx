@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { CSSTransition } from "react-transition-group"
 import { v4 } from "uuid"
 
-import { LoaderIcon } from "../assets/icons"
+import { LoaderCircle } from "../assets/icons"
 import Button from "./Button"
 import Input from "./Input"
 import SelectTime from "./SelectTime"
@@ -140,7 +140,7 @@ const AddTaskDialog = ({
                     disabled={isSubmitting}
                     type="submit"
                   >
-                    {isSubmitting && <LoaderIcon className="animate-spin" />}
+                    {isSubmitting && <LoaderCircle className="animate-spin" />}
                     Salvar
                   </Button>
                 </div>

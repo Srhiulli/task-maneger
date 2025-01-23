@@ -8,44 +8,48 @@ import {
   DetailsIcon,
   LoaderCircle,
   TrashIcon,
-} from "../assets/icons"
+} from "../assets//icons/index"
 import Button from "../components/Button"
 
-const TaskItem = ({ task, handleCheckboxClick, onDeleteSucess }) => {
-  const [deleteTaskIsLoading, setDeleteTaskIsLoading] = useState(false)
+const TaskItem = ({ task, handleCheckboxClick, onDeleteSuccess }) => {
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false)
 
   const handleDeleteClick = async () => {
-    setDeleteTaskIsLoading(true)
+    setDeleteIsLoading(true)
     const response = await fetch(`http://localhost:3000/tasks/${task.id}`, {
       method: "DELETE",
     })
     if (!response.ok) {
-      setDeleteTaskIsLoading(false)
-      toast.error("Erro ao deletar tarefa")
-      return
+      setDeleteIsLoading(false)
+      return toast.error(
+        "Erro ao deletar a tarefa. Por favor, tente novamente."
+      )
     }
-    onDeleteSucess(task.id)
-    setDeleteTaskIsLoading(false)
+    onDeleteSuccess(task.id)
+    setDeleteIsLoading(false)
   }
 
   const getStatusClasses = () => {
     if (task.status === "done") {
       return "bg-brand-primary text-brand-primary"
     }
+
     if (task.status === "in_progress") {
       return "bg-brand-process text-brand-process"
     }
+
     if (task.status === "not_started") {
-      return "bg-[#2B2D42] bg-opacity-5 text-[#2B2D42]"
+      return "bg-brand-dark-blue bg-opacity-10 text-brand-dark-blue"
     }
   }
+
   return (
     <div
-      className={`${getStatusClasses()} trasition flex items-center justify-between gap-2 rounded-lg bg-opacity-10 px-4 py-3 text-sm`}
+      className={`flex items-center justify-between gap-2 rounded-lg bg-opacity-10 px-4 py-3 text-sm transition ${getStatusClasses()}`}
     >
       <div className="flex items-center gap-2">
         <label
-          className={`relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg bg-opacity-50 ${getStatusClasses()}`}
+          className={`relative flex h-7 w-7 cursor-pointer items-center justify-center rounded-lg ${getStatusClasses()}`}
         >
           <input
             type="checkbox"
@@ -55,42 +59,44 @@ const TaskItem = ({ task, handleCheckboxClick, onDeleteSucess }) => {
           />
           {task.status === "done" && <CheckIcon />}
           {task.status === "in_progress" && (
-            <LoaderCircle className="animate-spin text-brand-process" />
+            <LoaderCircle className="animate-spin text-brand-white" />
           )}
         </label>
+
         {task.title}
       </div>
-      <div className="flex items-center gap-1">
+
+      <div className="flex items-center gap-2">
         <Button
-          color="secundary"
+          color="ghost"
           onClick={handleDeleteClick}
-          disabled={deleteTaskIsLoading}
+          disabled={deleteIsLoading}
         >
-          {deleteTaskIsLoading ? (
+          {deleteIsLoading ? (
             <LoaderCircle className="animate-spin text-brand-text-gray" />
           ) : (
             <TrashIcon className="text-brand-text-gray" />
           )}
         </Button>
-        <Link
-          to={`/task/${task.id}`}
-          className="transition-all hover:opacity-75"
-        >
+
+        <Link to={`/task/${task.id}`}>
           <DetailsIcon />
         </Link>
       </div>
     </div>
   )
 }
+
 TaskItem.propTypes = {
   task: PropTypes.shape({
-    id: PropTypes.node.isRequired,
+    id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    status: PropTypes.oneOf(["done", "in_progress", "not_started"]).isRequired,
-    time: PropTypes.oneOf(["morning", "afternoon", "night"]).isRequired,
     description: PropTypes.string.isRequired,
+    time: PropTypes.oneOf(["morning", "afternoon", "evening"]).isRequired,
+    status: PropTypes.oneOf(["not_started", "in_progress", "done"]).isRequired,
   }).isRequired,
   handleCheckboxClick: PropTypes.func.isRequired,
   handleDeleteClick: PropTypes.func.isRequired,
 }
+
 export default TaskItem

@@ -5,34 +5,38 @@ import {
   AddIcon,
   CludSunIcon,
   MoonIcon,
-  SendTotrash,
   SunIcon,
+  TrashIcon,
 } from "../assets/icons"
 import AddTaskDialog from "./AddTaskDialog"
 import Button from "./Button"
 import TaskItem from "./TaskItem"
-import TaskSeparator from "./TasksSeparator"
+import TasksSeparator from "./TasksSeparator"
 
-function TasksPage() {
-  const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
+const Tasks = () => {
   const [tasks, setTasks] = useState([])
+  const [addTaskDialogIsOpen, setAddTaskDialogIsOpen] = useState(false)
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const tasks = await fetch("http://localhost:3000/tasks", {
+      const response = await fetch("http://localhost:3000/tasks", {
         method: "GET",
       })
-
-      const data = await tasks.json()
-      setTasks(data)
+      const tasks = await response.json()
+      setTasks(tasks)
     }
-
     fetchTasks()
   }, [])
 
   const morningTasks = tasks.filter((task) => task.time === "morning")
   const afternoonTasks = tasks.filter((task) => task.time === "afternoon")
-  const nightTasks = tasks.filter((task) => task.time === "night")
+  const eveningTasks = tasks.filter((task) => task.time === "evening")
+
+  const onDeleteTaskSuccess = async (taskId) => {
+    const newTasks = tasks.filter((task) => task.id !== taskId)
+    setTasks(newTasks)
+    toast.success("Tarefa deletada com sucesso!")
+  }
 
   const handleTaskCheckboxClick = (taskId) => {
     const newTasks = tasks.map((task) => {
@@ -40,54 +44,29 @@ function TasksPage() {
         return task
       }
       if (task.status === "not_started") {
-        toast.success("Tarefa iniciada com sucesso")
-        return {
-          ...task,
-          status: "in_progress",
-        }
+        toast.success("Tarefa iniciada com sucesso!")
+        return { ...task, status: "in_progress" }
       }
       if (task.status === "in_progress") {
-        toast.success("Tarefa concluída com sucesso")
-        return {
-          ...task,
-          status: "done",
-        }
+        toast.success("Tarefa concluída com sucesso!")
+        return { ...task, status: "done" }
       }
       if (task.status === "done") {
-        toast.success("Tarefa reiniciada com sucesso")
-        return {
-          ...task,
-          status: "not_started",
-        }
+        toast.success("Tarefa reiniciada com sucesso!")
+        return { ...task, status: "not_started" }
       }
-      return {
-        ...task,
-        status: "done",
-      }
+      return task
     })
     setTasks(newTasks)
   }
 
-  const onDeleteTaskSucess = async (taskId) => {
-    const newTasks = tasks.filter((task) => task.id !== taskId)
-    setTasks(newTasks)
-    toast.success("Tarefa deletada com sucesso")
+  const onTaskSubmitSuccess = (task) => {
+    setTasks([...tasks, task])
+    toast.success("Tarefa adicionada com sucesso!")
   }
 
-  const handleAddTaskSubmit = async (newTask) => {
-    const response = await fetch("http://localhost:3000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newTask),
-    })
-    if (!response.ok) {
-      toast.error("Erro ao adicionar tarefa. Porfavor, tente novamente")
-      return
-    }
-    setTasks([...tasks, newTask])
-    toast.success("Tarefa adicionada com sucesso")
+  const onTaskSubmitError = () => {
+    toast.error("Erro ao adicionar tarefa. Por favor, tente novamente.")
   }
 
   return (
@@ -95,62 +74,78 @@ function TasksPage() {
       <div className="flex w-full justify-between">
         <div>
           <span className="text-xs font-semibold text-brand-primary">
-            Minhas tarefas
+            Minhas Tarefas
           </span>
-          <h2 className="text-black">Minhas tarefas</h2>
+          <h2 className="text-xl font-semibold">Minhas Tarefas</h2>
         </div>
+
         <div className="flex items-center gap-3">
-          <Button color="secundary">
+          <Button color="ghost">
             Limpar tarefas
-            <SendTotrash />
+            <TrashIcon />
           </Button>
-          <Button color="primary" onClick={() => setAddTaskDialogIsOpen(true)}>
-            Nova tarefa
+
+          <Button onClick={() => setAddTaskDialogIsOpen(true)}>
             <AddIcon />
+            Nova tarefa
           </Button>
+
           <AddTaskDialog
             isOpen={addTaskDialogIsOpen}
             handleClose={() => setAddTaskDialogIsOpen(false)}
-            handleSubmit={handleAddTaskSubmit}
+            onSubmitSuccess={onTaskSubmitSuccess}
+            onSubmitError={onTaskSubmitError}
           />
         </div>
       </div>
 
-      {/* LISTA DE TAREFAS */}
-
-      <div className="flex flex-col gap-2 rounded-xl bg-white p-6">
-        <div>
-          <TaskSeparator title="Manhã" icon={<SunIcon />} />
+      <div className="rounded-xl bg-white p-6">
+        <div className="space-y-3">
+          <TasksSeparator title="Manhã" icon={<SunIcon />} />
+          {morningTasks.length === 0 && (
+            <p className="text-sm text-brand-text-gray">Nenhuma tarefa</p>
+          )}
           {morningTasks.map((task) => (
             <TaskItem
-              task={task}
               key={task.id}
+              task={task}
               handleCheckboxClick={handleTaskCheckboxClick}
-              onDeleteSucess={onDeleteTaskSucess}
+              onDeleteSuccess={onDeleteTaskSuccess}
             />
           ))}
         </div>
-        <TaskSeparator title="Tarde" icon={<CludSunIcon />} />
-        {afternoonTasks.map((task) => (
-          <TaskItem
-            task={task}
-            key={task.id}
-            handleCheckboxClick={handleTaskCheckboxClick}
-            onDeleteSucess={onDeleteTaskSucess}
-          />
-        ))}{" "}
-        <TaskSeparator title="Noite" icon={<MoonIcon />} />
-        {nightTasks.map((task) => (
-          <TaskItem
-            task={task}
-            key={task.id}
-            handleCheckboxClick={handleTaskCheckboxClick}
-            onDeleteSucess={onDeleteTaskSucess}
-          />
-        ))}
+
+        <div className="my-6 space-y-3">
+          <TasksSeparator title="Tarde" icon={<CludSunIcon />} />
+          {afternoonTasks.length === 0 && (
+            <p className="text-sm text-brand-text-gray">Nenhuma tarefa</p>
+          )}
+          {afternoonTasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              handleCheckboxClick={handleTaskCheckboxClick}
+              onDeleteSuccess={onDeleteTaskSuccess}
+            />
+          ))}
+        </div>
+
+        <div className="space-y-3">
+          <TasksSeparator title="Noite" icon={<MoonIcon />} />
+          {eveningTasks.length === 0 && (
+            <p className="text-sm text-brand-text-gray">Nenhuma tarefa</p>
+          )}
+          {eveningTasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              handleCheckboxClick={handleTaskCheckboxClick}
+              onDeleteSuccess={onDeleteTaskSuccess}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )
 }
-
-export default TasksPage
+export default Tasks
