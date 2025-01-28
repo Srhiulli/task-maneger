@@ -1,4 +1,4 @@
-// import DashboardCards from "../components/DashboardCards"
+import DashboardCards from "../components/DashboardCards"
 import Header from "../components/Header"
 import Sidebar from "../components/Sidebar"
 import TaskItem from "../components/TaskItem"
@@ -11,7 +11,7 @@ const HomePage = () => {
       <Sidebar />
       <div className="w-full space-y-6 px-8 py-16">
         <Header subtitle="Dashboard" title="Dashboard" />
-        {/* <DashboardCards /> */}
+        <DashboardCards />
         <div className="grid grid-cols-[1.5fr,1fr] gap-6">
           <div className="space-y-6 rounded-[10px] bg-white p-6">
             <div>
