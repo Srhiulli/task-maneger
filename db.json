@@ -1,11 +1,3 @@
 {
-  "tasks": [
-    {
-      "id": "1b13c247-144f-4b65-935b-072a9f35220f",
-      "title": "aasasa",
-      "time": "morning",
-      "description": "aa",
-      "status": "not_started"
-    }
-  ]
+  "tasks": []
 }
