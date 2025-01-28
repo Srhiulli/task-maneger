@@ -85,7 +85,7 @@ const TaskDetailsPage = () => {
               <ArrowLeftIcon />
             </button>
             <div className="flex items-center gap-1 text-xs">
-              <Link className="cursor-pointer text-brand-text-gray" to="/">
+              <Link className="cursor-pointer text-brand-text-gray" to="/tasks">
                 Minhas tarefas
               </Link>
               <ChevronRightIcon className="text-brand-text-gray" />
