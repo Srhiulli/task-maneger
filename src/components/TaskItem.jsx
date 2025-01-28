@@ -10,11 +10,13 @@ import {
 } from "../assets/icons"
 import Button from "../components/Button"
 import { useDeleteTask } from "../hooks/data/use-delete-tasks"
+import { useUpdateTask } from "../hooks/data/use-update-task"
 
-const TaskItem = ({ task, handleCheckboxClick }) => {
+const TaskItem = ({ task }) => {
   const { mutate: deleteTask, isPending: deleteTaskIsLoading } = useDeleteTask(
     task.id
   )
+  const { mutate } = useUpdateTask(task.id)
 
   const getStatusClasses = () => {
     if (task.status === "done") {
@@ -26,7 +28,7 @@ const TaskItem = ({ task, handleCheckboxClick }) => {
     }
 
     if (task.status === "not_started") {
-      return "bg-brand-dark-blue bg-opacity-10 text-brand-dark-blue"
+      return "bg-brand-dark-blue bg-opacity-5 text-brand-dark-blue"
     }
   }
 
@@ -41,6 +43,32 @@ const TaskItem = ({ task, handleCheckboxClick }) => {
     })
   }
 
+  const getNewStatus = () => {
+    if (task.status === "not_started") {
+      return "in_progress"
+    }
+    if (task.status === "in_progress") {
+      return "done"
+    }
+    return "not_started"
+  }
+
+  const handleCheckboxClick = () => {
+    mutate(
+      {
+        status: getNewStatus(),
+      },
+      {
+        onSuccess: () =>
+          toast.success("Status da tarefa atualizado com sucesso!"),
+        onError: () =>
+          toast.error(
+            "Erro ao atualizar status da tarefa. Por favor, tente novamente."
+          ),
+      }
+    )
+  }
+
   return (
     <div
       className={`flex items-center justify-between gap-2 rounded-lg bg-opacity-10 px-4 py-3 text-sm transition ${getStatusClasses()}`}
@@ -53,7 +81,7 @@ const TaskItem = ({ task, handleCheckboxClick }) => {
             type="checkbox"
             checked={task.status === "done"}
             className="absolute h-full w-full cursor-pointer opacity-0"
-            onChange={() => handleCheckboxClick(task.id)}
+            onChange={handleCheckboxClick}
           />
           {task.status === "done" && <CheckIcon />}
           {task.status === "in_progress" && (
